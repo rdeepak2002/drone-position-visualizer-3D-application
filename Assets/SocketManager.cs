@@ -31,9 +31,12 @@ public class DeviceData
 
 public class SocketManager : MonoBehaviour {
     SocketIOCommunicator _socket;
+    public GameObject pointPrefab;
 
     private void Start()
     {
+        GameObject mapObjects = GameObject.Find("MapObjects");
+
         _socket = GetComponent<SocketIOCommunicator>();
         
         _socket.Instance.On("connect", (payload) =>
@@ -60,8 +63,34 @@ public class SocketManager : MonoBehaviour {
         
         _socket.Instance.On("device-data", (data) =>
         {
-            Debug.Log("Received: " + data);
+            // uncomment to log data received from socket server
+            // Debug.Log("Received: " + data);
+            // parse data from server to object
             DeviceData deviceData = JsonUtility.FromJson<DeviceData>(data);
+            var position = new Vector3(deviceData.Position.x, deviceData.Position.y, deviceData.Position.z);
+            var orientation = new Quaternion(deviceData.Orientation.x, deviceData.Orientation.y,
+                deviceData.Orientation.z, deviceData.Orientation.w);
+            // create instance of the point
+            var newPointGameObject = Instantiate(pointPrefab, position, orientation);
+            // parent point to map objects to keep scene organized
+            newPointGameObject.transform.parent = mapObjects.transform;
+            // set color of new point
+            if (deviceData.Confidence.Equals("0x1"))
+            {
+                newPointGameObject.GetComponent<MeshRenderer>().material.SetColor("_Color", Color.red);
+            }
+            else if (deviceData.Confidence.Equals("0x2"))
+            {
+                newPointGameObject.GetComponent<MeshRenderer>().material.SetColor("_Color", Color.yellow);
+            }
+            else if (deviceData.Confidence.Equals("0x3"))
+            {
+                newPointGameObject.GetComponent<MeshRenderer>().material.SetColor("_Color", Color.green);
+            }
+            else
+            {
+                newPointGameObject.GetComponent<MeshRenderer>().material.SetColor("_Color", Color.black);
+            }
         });
 
         _socket.Instance.Connect();
@@ -88,10 +117,12 @@ public class SocketManager : MonoBehaviour {
     {
         yield return new WaitUntil(() => _socket.Instance.IsConnected());
         yield return new WaitForSeconds(1);
-        _socket.Instance.Emit("device-1", "{\"Position\":{\"x\":0,\"y\":0,\"z\":0},\"Orientation\":{\"x\":1,\"y\":0,\"z\":0,\"w\":0},\"Confidence\":\"0x1\"}", false);
+        _socket.Instance.Emit("device-1", "{\"Position\":{\"x\":1,\"y\":0,\"z\":0},\"Orientation\":{\"x\":0,\"y\":0,\"z\":0,\"w\":0},\"Confidence\":\"0x1\"}", false);
         yield return new WaitForSeconds(1);
-        _socket.Instance.Emit("device-1", "{\"Position\":{\"x\":0,\"y\":0,\"z\":0},\"Orientation\":{\"x\":0,\"y\":1,\"z\":0,\"w\":0},\"Confidence\":\"0x2\"}", false);
+        _socket.Instance.Emit("device-1", "{\"Position\":{\"x\":0,\"y\":2,\"z\":0},\"Orientation\":{\"x\":0,\"y\":0,\"z\":0,\"w\":0},\"Confidence\":\"0x2\"}", false);
         yield return new WaitForSeconds(1);
-        _socket.Instance.Emit("device-1", "{\"Position\":{\"x\":0,\"y\":0,\"z\":0},\"Orientation\":{\"x\":0,\"y\":0,\"z\":1,\"w\":0},\"Confidence\":\"0x3\"}", false);
+        _socket.Instance.Emit("device-1", "{\"Position\":{\"x\":0,\"y\":0,\"z\":3},\"Orientation\":{\"x\":0,\"y\":0,\"z\":0,\"w\":0},\"Confidence\":\"0x3\"}", false);
+        yield return new WaitForSeconds(1);
+        _socket.Instance.Emit("device-1", "{\"Position\":{\"x\":1.1,\"y\":1.2,\"z\":1.3},\"Orientation\":{\"x\":0,\"y\":0,\"z\":0,\"w\":0},\"Confidence\":\"0x3\"}", false);
     }
 }

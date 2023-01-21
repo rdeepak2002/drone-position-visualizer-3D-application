@@ -1039,7 +1039,7 @@ GameObject:
   - component: {fileID: 1359647740}
   - component: {fileID: 1359647741}
   m_Layer: 5
-  m_Name: ShowTextToggle
+  m_Name: Show Text Toggle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

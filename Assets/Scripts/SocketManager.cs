@@ -34,17 +34,21 @@ public class SocketManager : MonoBehaviour {
     SocketIOCommunicator _socket;
     public GameObject startPointPrefab;
     public GameObject endPointPrefab;
-    public Toggle tracePathToggle;
-    public Toggle showTextToggle;
+    private GameObject tracePathToggle;
+    private GameObject showTextToggle;
     public bool sendTestData = false;
     private bool tracePath = false;
     private bool showPositionText = false;
 
     private GameObject startMarkerGameObject = null;
     private GameObject endMarkerGameObject = null;
+    private int count = 0;
 
     private void Start()
     {
+        showTextToggle = GameObject.Find("Show Text Toggle");
+        tracePathToggle = GameObject.Find("Trace Path Toggle");
+
         // trace path toggle
         var tracePathToggleComponent = tracePathToggle.GetComponent<Toggle>();
         tracePath = tracePathToggleComponent.isOn ? true : false;
@@ -97,7 +101,7 @@ public class SocketManager : MonoBehaviour {
             var orientation = new Quaternion(deviceData.Orientation.x, deviceData.Orientation.y,
                 deviceData.Orientation.z, deviceData.Orientation.w);
             // destroy old end marker
-            if (endMarkerGameObject != null && startMarkerGameObject != endMarkerGameObject)
+            if (endMarkerGameObject != null)
             {
                 if (!tracePath)
                 {
@@ -105,38 +109,37 @@ public class SocketManager : MonoBehaviour {
                 }
             }
             // create instance of the point
+            GameObject newlySpawnedObject = null;
             if (startMarkerGameObject == null)
             {
-                endMarkerGameObject = Instantiate(startPointPrefab, position, orientation);
+                startMarkerGameObject = Instantiate(startPointPrefab, position, orientation);
+                newlySpawnedObject = startMarkerGameObject;
             }
             else
             {
                 endMarkerGameObject = Instantiate(endPointPrefab, position, orientation);
+                newlySpawnedObject = endMarkerGameObject;
             }
             // parent point to map objects to keep scene organized
-            endMarkerGameObject.transform.parent = mapObjects.transform;
+            newlySpawnedObject.transform.parent = mapObjects.transform;
             // set color of new point
             if (deviceData.Confidence.Equals("0x1"))
             {
-                endMarkerGameObject.transform.GetChild(0).GetComponent<MeshRenderer>().material.SetColor("_Color", Color.red);
+                newlySpawnedObject.transform.GetChild(0).GetComponent<MeshRenderer>().material.SetColor("_Color", Color.red);
             }
             else if (deviceData.Confidence.Equals("0x2"))
             {
-                endMarkerGameObject.transform.GetChild(0).GetComponent<MeshRenderer>().material.SetColor("_Color", Color.yellow);
+                newlySpawnedObject.transform.GetChild(0).GetComponent<MeshRenderer>().material.SetColor("_Color", Color.yellow);
             }
             else if (deviceData.Confidence.Equals("0x3"))
             {
-                endMarkerGameObject.transform.GetChild(0).GetComponent<MeshRenderer>().material.SetColor("_Color", Color.green);
+                newlySpawnedObject.transform.GetChild(0).GetComponent<MeshRenderer>().material.SetColor("_Color", Color.green);
             }
             else
             {
-                endMarkerGameObject.transform.GetChild(0).GetComponent<MeshRenderer>().material.SetColor("_Color", Color.black);
+                newlySpawnedObject.transform.GetChild(0).GetComponent<MeshRenderer>().material.SetColor("_Color", Color.black);
             }
-            // set start marker
-            if (startMarkerGameObject == null)
-            {
-                startMarkerGameObject = endMarkerGameObject;
-            }
+            count++;
         });
 
         _socket.Instance.Connect();

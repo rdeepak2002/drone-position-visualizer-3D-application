@@ -37,7 +37,10 @@ public class PointManager : MonoBehaviour
             transform.Find("Canvas").gameObject.SetActive(showPositionText);
             GameObject textGameObject = transform.Find("Canvas").Find("Position Text").gameObject;
             TextMeshProUGUI textmeshPro = textGameObject.GetComponent<TextMeshProUGUI>();
-            textmeshPro.text = "(1, 1, 2)";
+            float x = transform.position.x;
+            float y = transform.position.y;
+            float z = transform.position.z;
+            textmeshPro.text = "(" + x.ToString("0.00") + ", " + y.ToString("0.00") + ", " + z.ToString("0.00") + ")";
         }
     }
 }

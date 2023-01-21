@@ -396,7 +396,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &820721519
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -427,8 +427,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startPointPrefab: {fileID: 5363905848333417228, guid: 9256adaade69545c69eb9b27879ce0e8, type: 3}
   endPointPrefab: {fileID: 5363905848333417228, guid: baadf09e6a7134239b3a25f5ded02482, type: 3}
-  tracePathToggle: {fileID: 888582442}
-  showTextToggle: {fileID: 1359647741}
   sendTestData: 0
 --- !u!4 &820721521
 Transform:
@@ -616,7 +614,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &949044551
 Transform:
   m_ObjectHideFlags: 0
@@ -646,8 +644,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startPointPrefab: {fileID: 5363905848333417228, guid: 9256adaade69545c69eb9b27879ce0e8, type: 3}
   endPointPrefab: {fileID: 5363905848333417228, guid: baadf09e6a7134239b3a25f5ded02482, type: 3}
-  tracePathToggle: {fileID: 888582442}
-  showTextToggle: {fileID: 1359647741}
   sendTestData: 1
 --- !u!114 &949044553
 MonoBehaviour:

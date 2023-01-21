@@ -32,6 +32,7 @@ public class DeviceData
 public class SocketManager : MonoBehaviour {
     SocketIOCommunicator _socket;
     public GameObject pointPrefab;
+    public bool sendTestData = false;
 
     private void Start()
     {
@@ -42,8 +43,10 @@ public class SocketManager : MonoBehaviour {
         _socket.Instance.On("connect", (payload) =>
         {
             Debug.Log("Connected! Socket ID: " + _socket.Instance.SocketID);
-            // uncomment to test sending a few data points
-            StartCoroutine(Test());
+            if (sendTestData)
+            {
+                StartCoroutine(Test());
+            }
         });
         
         _socket.Instance.On("disconnect", (payload) =>

@@ -1,6 +1,7 @@
 using System;
 using Firesplash.UnityAssets.SocketIO;
 using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 [Serializable]
@@ -31,11 +32,33 @@ public class DeviceData
 
 public class SocketManager : MonoBehaviour {
     SocketIOCommunicator _socket;
-    public GameObject pointPrefab;
+    public GameObject startPointPrefab;
+    public GameObject endPointPrefab;
+    public Toggle tracePathToggle;
+    public Toggle showTextToggle;
     public bool sendTestData = false;
+    private bool tracePath = false;
+    private bool showPositionText = false;
+
+    private GameObject startMarkerGameObject = null;
+    private GameObject endMarkerGameObject = null;
 
     private void Start()
     {
+        // trace path toggle
+        var tracePathToggleComponent = tracePathToggle.GetComponent<Toggle>();
+        tracePath = tracePathToggleComponent.isOn ? true : false;
+        tracePathToggleComponent.onValueChanged.AddListener(delegate {
+            tracePath = tracePathToggleComponent.isOn ? true : false;
+        });
+        
+        // show position text toggle
+        var showPositionPathToggleComponent = showTextToggle.GetComponent<Toggle>();
+        showPositionText = showPositionPathToggleComponent.isOn ? true : false;
+        showPositionPathToggleComponent.onValueChanged.AddListener(delegate {
+            showPositionText = showPositionPathToggleComponent.isOn ? true : false;
+        });
+
         GameObject mapObjects = GameObject.Find("MapObjects");
 
         _socket = GetComponent<SocketIOCommunicator>();
@@ -73,26 +96,46 @@ public class SocketManager : MonoBehaviour {
             var position = new Vector3(deviceData.Position.x, deviceData.Position.y, deviceData.Position.z);
             var orientation = new Quaternion(deviceData.Orientation.x, deviceData.Orientation.y,
                 deviceData.Orientation.z, deviceData.Orientation.w);
+            // destroy old end marker
+            if (endMarkerGameObject != null && startMarkerGameObject != endMarkerGameObject)
+            {
+                if (!tracePath)
+                {
+                    Destroy(endMarkerGameObject);
+                }
+            }
             // create instance of the point
-            var newPointGameObject = Instantiate(pointPrefab, position, orientation);
-            // parent point to map objects to keep scene organized
-            newPointGameObject.transform.parent = mapObjects.transform;
-            // set color of new point
-            if (deviceData.Confidence.Equals("0x1"))
+            if (startMarkerGameObject == null)
             {
-                newPointGameObject.GetComponent<MeshRenderer>().material.SetColor("_Color", Color.red);
-            }
-            else if (deviceData.Confidence.Equals("0x2"))
-            {
-                newPointGameObject.GetComponent<MeshRenderer>().material.SetColor("_Color", Color.yellow);
-            }
-            else if (deviceData.Confidence.Equals("0x3"))
-            {
-                newPointGameObject.GetComponent<MeshRenderer>().material.SetColor("_Color", Color.green);
+                endMarkerGameObject = Instantiate(startPointPrefab, position, orientation);
             }
             else
             {
-                newPointGameObject.GetComponent<MeshRenderer>().material.SetColor("_Color", Color.black);
+                endMarkerGameObject = Instantiate(endPointPrefab, position, orientation);
+            }
+            // parent point to map objects to keep scene organized
+            endMarkerGameObject.transform.parent = mapObjects.transform;
+            // set color of new point
+            if (deviceData.Confidence.Equals("0x1"))
+            {
+                endMarkerGameObject.transform.GetChild(0).GetComponent<MeshRenderer>().material.SetColor("_Color", Color.red);
+            }
+            else if (deviceData.Confidence.Equals("0x2"))
+            {
+                endMarkerGameObject.transform.GetChild(0).GetComponent<MeshRenderer>().material.SetColor("_Color", Color.yellow);
+            }
+            else if (deviceData.Confidence.Equals("0x3"))
+            {
+                endMarkerGameObject.transform.GetChild(0).GetComponent<MeshRenderer>().material.SetColor("_Color", Color.green);
+            }
+            else
+            {
+                endMarkerGameObject.transform.GetChild(0).GetComponent<MeshRenderer>().material.SetColor("_Color", Color.black);
+            }
+            // set start marker
+            if (startMarkerGameObject == null)
+            {
+                startMarkerGameObject = endMarkerGameObject;
             }
         });
 
@@ -127,5 +170,15 @@ public class SocketManager : MonoBehaviour {
         _socket.Instance.Emit("device-1", "{\"Position\":{\"x\":0,\"y\":0,\"z\":3},\"Orientation\":{\"x\":0,\"y\":0,\"z\":0,\"w\":0},\"Confidence\":\"0x3\"}", false);
         yield return new WaitForSeconds(1);
         _socket.Instance.Emit("device-1", "{\"Position\":{\"x\":1.1,\"y\":1.2,\"z\":1.3},\"Orientation\":{\"x\":0,\"y\":0,\"z\":0,\"w\":0},\"Confidence\":\"0x3\"}", false);
+        yield return new WaitForSeconds(1);
+        _socket.Instance.Emit("device-1", "{\"Position\":{\"x\":1.2,\"y\":1.2,\"z\":1.3},\"Orientation\":{\"x\":0,\"y\":0,\"z\":0,\"w\":0},\"Confidence\":\"0x3\"}", false);
+        yield return new WaitForSeconds(1);
+        _socket.Instance.Emit("device-1", "{\"Position\":{\"x\":1.3,\"y\":1.2,\"z\":1.3},\"Orientation\":{\"x\":0,\"y\":0,\"z\":0,\"w\":0},\"Confidence\":\"0x3\"}", false);
+        yield return new WaitForSeconds(1);
+        _socket.Instance.Emit("device-1", "{\"Position\":{\"x\":1.4,\"y\":1.2,\"z\":1.3},\"Orientation\":{\"x\":0,\"y\":0,\"z\":0,\"w\":0},\"Confidence\":\"0x3\"}", false);
+        yield return new WaitForSeconds(1);
+        _socket.Instance.Emit("device-1", "{\"Position\":{\"x\":1.5,\"y\":1.2,\"z\":1.3},\"Orientation\":{\"x\":0,\"y\":0,\"z\":0,\"w\":0},\"Confidence\":\"0x3\"}", false);
+        yield return new WaitForSeconds(1);
+        _socket.Instance.Emit("device-1", "{\"Position\":{\"x\":1.6,\"y\":1.2,\"z\":1.3},\"Orientation\":{\"x\":0,\"y\":0,\"z\":0,\"w\":0},\"Confidence\":\"0x3\"}", false);
     }
 }

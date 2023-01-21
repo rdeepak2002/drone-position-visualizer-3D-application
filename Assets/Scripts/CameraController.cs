@@ -7,8 +7,6 @@ public class CameraController : MonoBehaviour
     private float scrollScale = 100.0f;
     private float mouseMoveScale = 20.0f;
     private float mouseRotateScale = 200.0f;
-    private float maxYAngle = 89.9f;
-
     private Vector2 mousePosition;
     
     // Start is called before the first frame update

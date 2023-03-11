@@ -125,19 +125,36 @@ public class SocketManager : MonoBehaviour {
             // set color of new point
             if (deviceData.Confidence.Equals("0x1"))
             {
-                newlySpawnedObject.transform.GetChild(0).GetComponent<MeshRenderer>().material.SetColor("_Color", Color.red);
+                newlySpawnedObject.transform.Find("Mesh").GetComponent<MeshRenderer>().material.SetColor("_Color", Color.red);
+                // newlySpawnedObject.transform.Find("Mesh_Alt/Root/Cube/Cube_0").GetComponent<MeshRenderer>().material.SetColor("_Color", Color.red);
+                // Transform result = newlySpawnedObject.transform.Find("Root/Cube/Cube_0");
+                // if (result)
+                // {
+                //     newlySpawnedObject.transform.Find("Mesh/Root/Cube/Cube_0").GetComponent<MeshRenderer>().material.SetColor("_Color", Color.red);
+                // }
+                // newlySpawnedObject.transform.Find("Mesh/Root/Cube/Cube_0").GetComponent<MeshRenderer>().material.SetColor("_Color", Color.red);
+                // newlySpawnedObject.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetComponent<MeshRenderer>().material.SetColor("_Color", Color.red);
             }
             else if (deviceData.Confidence.Equals("0x2"))
             {
-                newlySpawnedObject.transform.GetChild(0).GetComponent<MeshRenderer>().material.SetColor("_Color", Color.yellow);
+                newlySpawnedObject.transform.Find("Mesh").GetComponent<MeshRenderer>().material.SetColor("_Color", Color.yellow);
+
+                // newlySpawnedObject.transform.Find("Cube_0").GetComponent<MeshRenderer>().material.SetColor("_Color", Color.yellow);
+                // newlySpawnedObject.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetComponent<MeshRenderer>().material.SetColor("_Color", Color.yellow);
             }
             else if (deviceData.Confidence.Equals("0x3"))
             {
-                newlySpawnedObject.transform.GetChild(0).GetComponent<MeshRenderer>().material.SetColor("_Color", Color.green);
+                newlySpawnedObject.transform.Find("Mesh").GetComponent<MeshRenderer>().material.SetColor("_Color", Color.green);
+
+                // newlySpawnedObject.transform.Find("Cube_0").GetComponent<MeshRenderer>().material.SetColor("_Color", Color.green);
+                // newlySpawnedObject.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetComponent<MeshRenderer>().material.SetColor("_Color", Color.green);
             }
             else
             {
-                newlySpawnedObject.transform.GetChild(0).GetComponent<MeshRenderer>().material.SetColor("_Color", Color.black);
+                newlySpawnedObject.transform.Find("Mesh").GetComponent<MeshRenderer>().material.SetColor("_Color", Color.black);
+
+                // newlySpawnedObject.transform.Find("Cube_0").GetComponent<MeshRenderer>().material.SetColor("_Color", Color.black);
+                // newlySpawnedObject.transform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetComponent<MeshRenderer>().material.SetColor("_Color", Color.black);
             }
             count++;
         });

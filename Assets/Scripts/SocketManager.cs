@@ -34,6 +34,7 @@ public class SocketManager : MonoBehaviour {
     SocketIOCommunicator _socket;
     public GameObject startPointPrefab;
     public GameObject endPointPrefab;
+    public GameObject linePrefab;
     private GameObject tracePathToggle;
     private GameObject showTextToggle;
     public bool sendTestData = false;
@@ -100,13 +101,39 @@ public class SocketManager : MonoBehaviour {
             var position = new Vector3(deviceData.Position.x, deviceData.Position.y, deviceData.Position.z);
             var orientation = new Quaternion(deviceData.Orientation.x, deviceData.Orientation.y,
                 deviceData.Orientation.z, deviceData.Orientation.w);
+            {
+                if (tracePath)
+                {
+                    bool canDrawLine = false;
+                    Vector3 oldPosition = new Vector3();
+                    if (endMarkerGameObject != null)
+                    {
+                        oldPosition = endMarkerGameObject.transform.position;
+                        canDrawLine = true;
+                    } 
+                    else if (startMarkerGameObject != null)
+                    {
+                        oldPosition = startMarkerGameObject.transform.position;
+                        canDrawLine = true;
+                    }
+                    if (canDrawLine)
+                    {
+                        var lineDirection = position - oldPosition;
+                        var middlePosition = oldPosition + 0.5f * lineDirection;
+                        var rot = Quaternion.LookRotation(lineDirection, Vector3.up);
+                        GameObject lineGameObject = Instantiate(linePrefab, middlePosition, rot);
+                        lineGameObject.transform.Find("GameObject").transform.localScale = new Vector3(0.1f, lineDirection.magnitude / 2.0f, 0.1f);
+                    }
+                }
+            }
             // destroy old end marker
             if (endMarkerGameObject != null)
             {
-                if (!tracePath)
-                {
-                    Destroy(endMarkerGameObject);
-                }
+                // if (!tracePath)
+                // {
+                //     Destroy(endMarkerGameObject);
+                // }
+                Destroy(endMarkerGameObject);
             }
             // create instance of the point
             GameObject newlySpawnedObject = null;

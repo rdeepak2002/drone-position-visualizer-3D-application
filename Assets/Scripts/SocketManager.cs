@@ -122,7 +122,8 @@ public class SocketManager : MonoBehaviour {
                         var middlePosition = oldPosition + 0.5f * lineDirection;
                         var rot = Quaternion.LookRotation(lineDirection, Vector3.up);
                         GameObject lineGameObject = Instantiate(linePrefab, middlePosition, rot);
-                        lineGameObject.transform.Find("GameObject").transform.localScale = new Vector3(0.1f, lineDirection.magnitude / 2.0f, 0.1f);
+                        float scaleFactor = 1.0f;
+                        lineGameObject.transform.Find("GameObject").transform.localScale = new Vector3(0.1f, lineDirection.magnitude / scaleFactor, 0.1f);
                     }
                 }
             }
@@ -133,7 +134,7 @@ public class SocketManager : MonoBehaviour {
                 // {
                 //     Destroy(endMarkerGameObject);
                 // }
-                Destroy(endMarkerGameObject);
+                // Destroy(endMarkerGameObject);
             }
             // create instance of the point
             GameObject newlySpawnedObject = null;
@@ -142,10 +143,16 @@ public class SocketManager : MonoBehaviour {
                 startMarkerGameObject = Instantiate(startPointPrefab, position, orientation);
                 newlySpawnedObject = startMarkerGameObject;
             }
-            else
+            else if (endMarkerGameObject == null)
             {
                 endMarkerGameObject = Instantiate(endPointPrefab, position, orientation);
                 newlySpawnedObject = endMarkerGameObject;
+            }
+            else
+            {
+                newlySpawnedObject = endMarkerGameObject;
+                newlySpawnedObject.transform.position = position;
+                newlySpawnedObject.transform.rotation = orientation;
             }
             // parent point to map objects to keep scene organized
             newlySpawnedObject.transform.parent = mapObjects.transform;
